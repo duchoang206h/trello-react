@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useHistory, withRouter } from 'react-router-dom';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { createUser, createUserWithEmailAndPassword } from '../application/services/auth';
-import { ROUTES } from '../application/constants';
+import { ROUTES } from '../config/constant';
 
 const SignUpForm = ({ onSubmit }) => {
     const [username, setUsername] = useState('');

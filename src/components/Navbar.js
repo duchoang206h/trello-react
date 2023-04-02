@@ -3,7 +3,7 @@ import { HomeOutlined, SettingOutlined } from '@ant-design/icons';
 import { Link, withRouter } from 'react-router-dom';
 import React from 'react';
 import { signOut } from '../application/services/auth';
-import { ROUTES } from '../application/constants';
+import { ROUTES } from '../config/constant';
 
 export const Navbar = withRouter(() => {
     return (

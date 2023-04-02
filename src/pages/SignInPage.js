@@ -6,7 +6,7 @@ import { auth, provider } from '../application/services/firebase';
 import { actionTypes } from '../auth/reducer';
 import { useStateValue } from '../application/state-provider';
 import { authService } from '../application/services';
-import { ROUTES } from '../application/constants';
+import { ROUTES } from '../config/constant';
 
 const SignInForm = () => {
     const [email, setEmail] = useState('');
