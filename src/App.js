@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import { ROUTES } from './application/constants';
 import './index.css';
 import { withAuthentication } from './auth/auth-hoc';
 import { AuthUserContext } from './auth/auth-user-context';
@@ -10,6 +9,7 @@ import { SignInPage } from './pages/SignInPage';
 import { BoardsPage } from './pages/BoardsPage';
 import { BoardPage } from './pages/BoardPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { ROUTES } from './config/constant';
 
 export const Content = withAuthentication(() => (
     <Router>
