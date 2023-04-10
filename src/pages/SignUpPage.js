@@ -2,7 +2,6 @@ import { Button, Form, Input } from 'antd';
 import React, { useState } from 'react';
 import { useHistory, withRouter } from 'react-router-dom';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { createUser, createUserWithEmailAndPassword } from '../application/services/auth';
 import { ROUTES } from '../config/constant';
 
 const SignUpForm = ({ onSubmit }) => {
@@ -66,8 +65,7 @@ export const SignUpPage = withRouter(() => {
     const history = useHistory();
 
     const onSubmit = async (email, password, username) => {
-        const authUser = await createUserWithEmailAndPassword(email, password);
-        await createUser(authUser.user.uid, username, email);
+        // call api signup
         history.push(ROUTES.BOARDS);
     };
 

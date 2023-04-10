@@ -1,47 +1,26 @@
 import { Button, Form, Input } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { auth, provider } from '../application/services/firebase';
-import { actionTypes } from '../auth/reducer';
-import { useStateValue } from '../application/state-provider';
-import { authService } from '../application/services';
 import { ROUTES } from '../config/constant';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../stores/auth.slice';
 const SignInForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [, dispatch] = useStateValue();
+    const { isLoading, isSuccess, errorMessage } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
     const history = useHistory();
 
     const signInWithGoogle = async (event) => {
         event.preventDefault();
-        try {
-            setLoading(true);
-            const result = await auth.signInWithPopup(provider);
-            dispatch({
-                type: actionTypes.SET_USER,
-                user: result.user,
-            });
-            history.push(ROUTES.BOARDS);
-            setLoading(false);
-        } catch (error) {
-            setError(error.message);
-            setLoading(false);
-        }
+        dispatch(login({ username: email, password }));
+        history.push(ROUTES.BOARDS);
     };
-
-    const onFinish = async () => {
-        try {
-            setLoading(true);
-            await authService.signInWithEmailAndPassword(email, password);
-        } catch (error) {
-            setError(error.message);
-            setLoading(false);
-        }
-    };
+    useEffect(() => {
+        if (isSuccess === true) history.push('/boards');
+    }, [isSuccess]);
+    const onFinish = () => dispatch(login({ username: email, password }));
 
     return (
         <div>
@@ -64,7 +43,7 @@ const SignInForm = () => {
                         placeholder="Password"
                     />
 
-                    <div className={`text-red-500`}>{error}</div>
+                    <div className={`text-red-500`}>{errorMessage}</div>
                 </Form.Item>
 
                 <Form.Item>
@@ -72,7 +51,7 @@ const SignInForm = () => {
                         type="primary"
                         htmlType="submit"
                         className={`w-full my-2`}
-                        disabled={loading}
+                        disabled={isLoading}
                     >
                         Sign in
                     </Button>
@@ -81,7 +60,7 @@ const SignInForm = () => {
                         htmlType="submit"
                         className={`w-full mb-2`}
                         onClick={signInWithGoogle}
-                        disabled={loading}
+                        disabled={isLoading}
                     >
                         Continue with Google
                     </Button>
