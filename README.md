@@ -23,6 +23,7 @@ $ cd react-trello-clone
 Here you can to run development environment in the two ways.
 
 ### Setup
+* Node: 16
 
 Install npm dependencies
 
