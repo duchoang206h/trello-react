@@ -1,38 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import Board from 'react-trello';
 import { BoardSkeleton } from '../components/BoardSkeleton';
+import { createList, getBoardById } from '../api/board';
+import { useLocation } from 'react-router-dom';
 
 export const BoardPage = (props) => {
     const [board, setBoard] = useState({
-        lanes: [],
+        lists: [],
     });
+    const location = useLocation();
+    //const boardId = () => props.match?.params?.board;
+    console.log(location.pathname);
+    const boardId = parseInt(location.pathname.replace('/boards/', ''));
     const [loading, setLoading] = useState(false);
-
     useEffect(() => {
         (async () => {
             setLoading(true);
-            await fetchBoard();
+            await fetchBoard(boardId);
             setLoading(false);
         })();
     }, []);
 
-    const fetchBoard = async () => {
+    const fetchBoard = async (fetchBoard) => {
         // call getBoardById
-        //setBoard(prepareBoard());
+        const board = await getBoardById(fetchBoard);
+        setBoard(prepareBoard(board));
     };
 
     // Fill empty properties that are important for Board component
     const prepareBoard = (board) => ({
         ...board,
-        lanes: (board?.lanes || []).map((lane) => ({
-            ...lane,
-            cards: lane?.cards || [],
+        lists: (board?.lists || []).map((list) => ({
+            ...list,
+            cards: list?.cards || [],
         })),
     });
 
-    const boardId = () => props.match?.params?.board;
-
     const handleDataChange = async (data) => {};
+    const handleAddCard = async (card, listId) => {
+        console.log({ card, listId });
+    };
+    const handleAddList = async ({ title }) => {
+        setLoading(true);
+        await createList(title, boardId);
+        setLoading(false);
+    };
 
     if (loading) {
         return <BoardSkeleton count={5} />;
@@ -44,9 +56,11 @@ export const BoardPage = (props) => {
             canAddLanes={true}
             editable={true}
             data={{
-                lanes: board.lanes || [],
+                lanes: board.lists || [],
             }}
             onDataChange={handleDataChange}
+            onCardAdd={handleAddCard}
+            onLaneAdd={handleAddList}
         />
     );
 };
