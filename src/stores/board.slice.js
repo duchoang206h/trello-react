@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getBoardByUserId } from '../api/board';
-import { useSelector } from 'react-redux';
+import { createBoardByUser, getBoardByUser } from '../api/board';
 
 const initialState = {
     boards: [],
@@ -21,7 +20,7 @@ export const boardSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(getBoards.fulfilled, (state, action) => {
-                state.boards = action.payload.boards;
+                state.boards = action.payload;
                 state.isSuccess = true;
                 state.isLoading = false;
             })
@@ -29,14 +28,29 @@ export const boardSlice = createSlice({
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
+            })
+            // create ....
+            .addCase(createBoard.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(createBoard.fulfilled, (state, action) => {
+                state.isSuccess = true;
+                state.boards = [...state.boards, action.payload];
+                state.isLoading = false;
+            })
+            .addCase(createBoard.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = 'create board fail';
             });
-        // update ....
     },
 });
-export const getBoards = createAsyncThunk('getBoards', async (userId) => {
-    return await getBoardByUserId(userId);
+export const getBoards = createAsyncThunk('getBoards', async () => {
+    return await getBoardByUser();
 });
-
+export const createBoard = createAsyncThunk('createBoard', async (name) => {
+    return await createBoardByUser(name);
+});
 // Action creators are generated for each case reducer function
 
 export default boardSlice.reducer;

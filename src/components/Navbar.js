@@ -19,7 +19,7 @@ export const Navbar = withRouter(() => {
             <Dropdown
                 overlay={
                     <Menu>
-                        <Menu.Item key="0" onClick={() => signOut()}>
+                        <Menu.Item key="0" onClick={() => {}}>
                             Sign Out
                         </Menu.Item>
                     </Menu>

@@ -5,28 +5,26 @@ import { BoardTitle } from '../components/BoardTitle';
 import { BoardModal } from '../components/BoardModal';
 import { BoardsPageSkeleton } from '../components/BoardsPageSkeleton';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBoards } from '../stores/board.slice';
+import { createBoard, getBoards } from '../stores/board.slice';
 import { isLogged } from '../utils/common';
 
 export const BoardsPage = () => {
     const { boards, isLoading } = useSelector((state) => state.board);
-    const { userId } = useSelector((state) => state.auth);
 
     const history = useHistory();
     if (!isLogged()) history.push('/signin');
     const [modalVisible, setModalVisible] = useState(false);
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(getBoards(userId));
+        if (!boards.length) {
+            dispatch(getBoards());
+        }
     }, []);
 
     const addBoard = async (board) => {
         //call api add board
+        dispatch(createBoard(board.title));
         setModalVisible(false);
-    };
-
-    const starBoard = async (board, starred) => {
-        //call api add board
     };
 
     if (isLoading) {
@@ -42,11 +40,10 @@ export const BoardsPage = () => {
             <div className="grid grid-cols-4 gap-4">
                 {boards.map((board) => (
                     <BoardTitle
-                        key={board?.key}
-                        title={board.title}
-                        handleBoardClick={() => history.push(`boards/${board?.key}`)}
-                        handleBoardStarToggling={() => starBoard(board?.key, !board.starred)}
-                        starred={board.starred || false}
+                        key={board?.id}
+                        title={board.name}
+                        handleBoardClick={() => history.push(`boards/${board?.id}`)}
+                        starred={false}
                     />
                 ))}
                 <BoardTitle
