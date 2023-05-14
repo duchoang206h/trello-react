@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Board from 'react-trello';
 import { BoardSkeleton } from '../components/BoardSkeleton';
-import { createList, getBoardById } from '../api/board';
+import { createCard, createList, getBoardById } from '../api/board';
 import { useLocation } from 'react-router-dom';
 
 export const BoardPage = (props) => {
@@ -36,14 +36,19 @@ export const BoardPage = (props) => {
         })),
     });
 
-    const handleDataChange = async (data) => {};
+    const handleDataChange = async (data) => {
+        console.log(data);
+    };
     const handleAddCard = async (card, listId) => {
-        console.log({ card, listId });
+        await createCard({
+            title: card.title,
+            description: card.description,
+            listId: listId,
+            order: 1,
+        });
     };
     const handleAddList = async ({ title }) => {
-        setLoading(true);
         await createList(title, boardId);
-        setLoading(false);
     };
 
     if (loading) {

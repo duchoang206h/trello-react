@@ -5,6 +5,7 @@ export const API_PATH = {
     SIGN_IN: API_URL + '/user/login/',
     BOARDS: API_URL + '/user/board/',
     LIST: API_URL + '/user/list/',
+    CARD: API_URL + '/user/card/',
 
     REFRESH_TOKEN: API_URL + '/user/refresh/',
 };
