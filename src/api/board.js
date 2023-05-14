@@ -20,7 +20,7 @@ export const createBoardByUser = async (name) => {
 };
 export const getBoardById = async (id) => {
     return request({
-        url: API_PATH.BOARDS + id,
+        url: API_PATH.BOARDS + id + '/',
         method: 'GET',
         headers,
     });
