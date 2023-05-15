@@ -7,7 +7,6 @@ import { BoardsPageSkeleton } from '../components/BoardsPageSkeleton';
 import { useDispatch, useSelector } from 'react-redux';
 import { createBoard, deleteBoard, getBoards, updateBoard } from '../stores/board.slice';
 import { isLogged } from '../utils/common';
-import { deleteBoardByUser, editBoardByUser } from '../api/board';
 
 export const BoardsPage = () => {
     const { boards, isLoading } = useSelector((state) => state.board);
@@ -25,7 +24,7 @@ export const BoardsPage = () => {
         if (!boards.length) {
             dispatch(getBoards());
         }
-    }, [addModalVisible, updateModalVisible, deleteModalVisible]);
+    }, []);
 
     const addBoard = async (board) => {
         //call api add board
@@ -39,7 +38,6 @@ export const BoardsPage = () => {
     };
 
     const removeBoard = async (board) => {
-        console.log(board);
         dispatch(deleteBoard(board.id));
         setUpdateModalVisible(false);
     };

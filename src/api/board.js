@@ -42,7 +42,7 @@ export const deleteBoardByUser = async (id) => {
     });
 };
 
-export const createList = async (title, boardId) => {
+export const createList = async (title = '?', boardId) => {
     return request({
         url: API_PATH.LIST,
         method: 'POST',
@@ -51,7 +51,7 @@ export const createList = async (title, boardId) => {
     });
 };
 
-export const editList = async ({ title = ' ', boardId, id }) => {
+export const editList = async ({ title = '?', boardId, id }) => {
     return request({
         url: API_PATH.LIST + id + '/',
         method: 'PUT',
@@ -68,8 +68,7 @@ export const deleteList = async (id) => {
     });
 };
 
-export const createCard = async ({ title = ' ', description = ' ', order = '1', listId }) => {
-    console.log({ title, listId });
+export const createCard = async ({ title = '?', description = '?', order = '1', listId }) => {
     return request({
         url: API_PATH.CARD,
         method: 'POST',
@@ -78,7 +77,7 @@ export const createCard = async ({ title = ' ', description = ' ', order = '1', 
     });
 };
 
-export const editCard = async ({ title = ' ', description = ' ', order = '1', listId, id }) => {
+export const editCard = async ({ title = '?', description = '?', order = '1', listId, id }) => {
     return request({
         url: API_PATH.CARD + id + '/',
         method: 'PUT',

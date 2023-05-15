@@ -3,8 +3,10 @@ import { HomeOutlined, SettingOutlined } from '@ant-design/icons';
 import { Link, withRouter } from 'react-router-dom';
 import React from 'react';
 import { ROUTES } from '../config/constant';
-import { isLogged } from '../utils/common';
+import { isLogged, logout } from '../utils/common';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 export const Navbar = withRouter(() => {
+    const history = useHistory();
     return isLogged() ? (
         <nav
             className={`flex justify-between bg-blue-500 text-white px-3 py-2 absolute z-10 top-0 left-0 right-0`}
@@ -19,7 +21,13 @@ export const Navbar = withRouter(() => {
             <Dropdown
                 overlay={
                     <Menu>
-                        <Menu.Item key="0" onClick={() => {}}>
+                        <Menu.Item
+                            key="0"
+                            onClick={() => {
+                                history.push('/signin');
+                                logout();
+                            }}
+                        >
                             Sign Out
                         </Menu.Item>
                     </Menu>
