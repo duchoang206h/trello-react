@@ -77,12 +77,12 @@ export const createCard = async ({ title = '?', description = '?', order = '1', 
     });
 };
 
-export const editCard = async ({ title = '?', description = '?', order = '1', listId, id }) => {
+export const editCard = async (card, listId, order = 1) => {
     return request({
-        url: API_PATH.CARD + id + '/',
+        url: API_PATH.CARD + card.id + '/',
         method: 'PUT',
         headers,
-        body: { title, description, order, list: listId },
+        body: { ...card, order, list: listId },
     });
 };
 

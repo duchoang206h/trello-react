@@ -10,7 +10,7 @@ import {
     getBoardById,
 } from '../api/board';
 import { useLocation } from 'react-router-dom';
-import { number } from 'prop-types';
+import { isEmptyText } from '../utils/common';
 
 export const BoardPage = (props) => {
     const [board, setBoard] = useState({
@@ -46,48 +46,77 @@ export const BoardPage = (props) => {
         })),
     });
 
+    const convertId = (id) => {
+        if (typeof id != 'number') {
+            id = correspondingId[id];
+        }
+        return id;
+    };
+
     const handleDataChange = async (data) => {
-        console.log(data.lanes);
-        console.log(preLists);
+        if (data.lanes.length !== preLists.length) {
+            setPreLists(data.lanes);
+            return;
+        }
+        let check = 0;
+        for (const lane of data.lanes) {
+            check += lane?.cards?.length;
+        }
+        for (const list of preLists) {
+            check -= list?.cards?.length;
+        }
+        if (check !== 0) {
+            setPreLists(data.lanes);
+            return;
+        }
+        for (const i in preLists) {
+            const preCards = preLists[i].cards;
+            const curCards = data.lanes[i].cards;
+            const listId = preLists[i].id;
+            console.log(preCards, curCards);
+            if (preCards.length < curCards.length) {
+                for (const j in curCards) {
+                    const isCard = preCards.find((card) => card.id === curCards[j].id);
+                    if (!isCard) {
+                        console.log(curCards[j], listId);
+                        await handleUpdateCard(listId, curCards[j]);
+                        console.log('Update successful');
+                        setPreLists(data.lanes);
+                        return;
+                    }
+                }
+            }
+        }
         setPreLists(data.lanes);
     };
     const handleAddCard = async (card, listId) => {
+        listId = convertId(listId);
         const res = await createCard({
-            title: card.title.length ? card.title : '?',
-            description: card.description ? card.description.length : '?',
-            listId: listId,
+            title: isEmptyText(card.title) ? '?' : card.title,
+            description: isEmptyText(card.description) ? '?' : card.description,
+            listId,
             order: 1,
         });
-        card.id = res.id;
-        console.log(card);
         setCorrespondingId({ ...correspondingId, [card.id]: res.id });
     };
     const handleAddList = async (list) => {
-        const res = await createList(list.title, boardId);
-        list.id = res.id;
-        console.log(list);
+        const res = await createList(isEmptyText(list.title) ? '?' : list.title, boardId);
         setCorrespondingId({ ...correspondingId, [list.id]: res.id });
     };
 
     const handleDeleteList = async (listId) => {
-        if (typeof id != number) {
-            listId = correspondingId[listId];
-        }
+        listId = convertId(listId);
         deleteList(listId);
     };
 
     const handleDeleteCard = async (cardId) => {
-        if (typeof id != number) {
-            cardId = correspondingId[cardId];
-        }
+        cardId = convertId(cardId);
         deleteCard(cardId);
     };
-    const handleUpdateCard = async (listId, { description, id }) => {
-        console.log(listId, description, id);
-        if (typeof id != number) {
-            id = correspondingId[id];
-        }
-        editCard({ listId, description, id });
+    const handleUpdateCard = async (listId, card) => {
+        card.id = convertId(card.id);
+        listId = convertId(listId);
+        editCard(card, listId);
     };
 
     if (loading) {
