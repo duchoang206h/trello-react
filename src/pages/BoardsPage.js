@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { UserOutlined, StarOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { BoardTitle } from '../components/BoardTitle';
-import { BoardModal } from '../components/BoardModal';
+import { BoardModal, BoardModalForDelete, BoardModalForUpdate } from '../components/BoardModal';
 import { BoardsPageSkeleton } from '../components/BoardsPageSkeleton';
 import { useDispatch, useSelector } from 'react-redux';
-import { createBoard, getBoards } from '../stores/board.slice';
+import { createBoard, deleteBoard, getBoards, updateBoard } from '../stores/board.slice';
 import { isLogged } from '../utils/common';
 
 export const BoardsPage = () => {
@@ -13,9 +13,14 @@ export const BoardsPage = () => {
 
     const history = useHistory();
     if (!isLogged()) history.push('/signin');
-    const [modalVisible, setModalVisible] = useState(false);
+    const [addModalVisible, setAddModalVisible] = useState(false);
+    const [updateModalVisible, setUpdateModalVisible] = useState(false);
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [currentBoard, setCurrentBoard] = useState();
+
     const dispatch = useDispatch();
     useEffect(() => {
+        console.log(boards);
         if (!boards.length) {
             dispatch(getBoards());
         }
@@ -24,7 +29,17 @@ export const BoardsPage = () => {
     const addBoard = async (board) => {
         //call api add board
         dispatch(createBoard(board.title));
-        setModalVisible(false);
+        setAddModalVisible(false);
+    };
+
+    const putBoard = async (board) => {
+        dispatch(updateBoard([board.id, board.title]));
+        setUpdateModalVisible(false);
+    };
+
+    const removeBoard = async (board) => {
+        dispatch(deleteBoard(board.id));
+        setUpdateModalVisible(false);
     };
 
     if (isLoading) {
@@ -43,21 +58,47 @@ export const BoardsPage = () => {
                         key={board?.id}
                         title={board.name}
                         handleBoardClick={() => history.push(`boards/${board?.id}`)}
+                        handleEditBoardClick={() => {
+                            setCurrentBoard(board);
+                            setUpdateModalVisible(true);
+                        }}
+                        handleDeleteBoardClick={() => {
+                            setCurrentBoard(board);
+                            setDeleteModalVisible(true);
+                        }}
                         starred={false}
                     />
                 ))}
                 <BoardTitle
                     title="Add new board"
                     addition={true}
-                    handleBoardClick={() => setModalVisible(true)}
+                    handleBoardClick={() => setAddModalVisible(true)}
                 />
             </div>
 
             <BoardModal
                 action={addBoard}
-                closeModal={() => setModalVisible(false)}
-                visible={modalVisible}
+                closeModal={() => setAddModalVisible(false)}
+                visible={addModalVisible}
             />
+            {currentBoard && (
+                <BoardModalForUpdate
+                    key={currentBoard.id}
+                    board={currentBoard}
+                    action={putBoard}
+                    closeModal={() => setUpdateModalVisible(false)}
+                    visible={updateModalVisible}
+                />
+            )}
+            {currentBoard && (
+                <BoardModalForDelete
+                    key={currentBoard.id + currentBoard.name}
+                    board={currentBoard}
+                    action={removeBoard}
+                    closeModal={() => setDeleteModalVisible(false)}
+                    visible={deleteModalVisible}
+                />
+            )}
         </div>
     );
 };
